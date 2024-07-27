@@ -10,22 +10,6 @@ Boas práticas: A solução proposta segue boas práticas de Python, Git, Docker
 
 
 
-
-Após ter o link dos artigos de cada categoria, é extraido as informações do artigo assim como seus links de pdf ou site da fonte do artigo.
-
-Depois é feito download via requisição (Request)
-
-Como mostra as etapas:
-
-1 Parte: Extração do link dos artigos do QXMD
- <img src="imgs/part_1.png" alt="Logo do Projeto" width="100%">
-
-2 Parte: Extração Informações do artigos do QXMD
- <img src="imgs/part_2.png" alt="Logo do Projeto" width="100%">
-
-3 Parte: Download do .pdf 
- <img src="imgs/part_3.png" alt="Logo do Projeto" width="100%">
-
  
  #### Antes de rodar o script no seu computador, certifique-se de ter o seguinte instalado em sua máquina:
 * Python 3.10.12
