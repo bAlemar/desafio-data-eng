@@ -37,6 +37,19 @@ def loading_to_postgres_flow():
     load_dataframe_to_postgres(df_final)
 
 
+from prefect_dbt.cli.commands import DbtCoreOperation
+@flow(name="DBT")
+def dbt_process():
+    """
+    Criação de view seguindo arquitetura bronze,silver e gold
+    """
+    result = DbtCoreOperation(
+        commands=["dbt build -t dev"],
+        project_dir="dbt_prefeitura",
+        profiles_dir="~/.dbt"
+    ).run()
+    return result
+
 @flow(name="Att_Quadrimestral")
 def att_quadrimestral():
     """
@@ -71,3 +84,4 @@ if __name__ == "__main__":
         first_run_flow(start_ano, end_ano, meses, urls_base,file_txt)
 
     loading_to_postgres_flow()
+    dbt_process()
