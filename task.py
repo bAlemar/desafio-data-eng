@@ -6,7 +6,6 @@ import re
 import os
 from utils.extract_data import Extract_data
 from utils.loading_to_postgre import LoadingToPosgre
-from utils.att_data import Att_Quadrimestral
 from datetime import datetime
 extract_data = Extract_data()
 
@@ -37,14 +36,3 @@ def load_dataframe_to_postgres(df):
     loading_to_postgres.loading_dataframe_to_postgres(df)
 
 
-# att = Att_Quadrimestral()
-
-# @task
-# def get_csv_from_url():
-#     dados = att.download_and_process(url)
-#     att.transform_bytes_to_xlsx_and_save()
-
-# @task
-# def save_new_data_in_db():
-#     att.
-#     pass

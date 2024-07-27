@@ -5,6 +5,7 @@ from io import BytesIO
 from datetime import datetime
 import csv
 import re
+import os
 
 class Extract_data:
     """
@@ -46,12 +47,17 @@ class Extract_data:
             type_file = all_data['tipo'][pos]
             file_csv = all_data['url'][pos].split('.')[-2].split('/')[-1] + '.' + 'csv'
             path_csv = 'csv'
+            self.__check_path(path_csv)
             data = all_data['data_content'][pos]
             if type_file == 'csv':
                 self.__transform_bytes_to_csv_and_save(data,rf"{path_csv}/{file_csv}")
             elif type_file == 'xlsx':
                 df = self.transform_bytes_to_xlsx_and_save(data,rf"{path_csv}/{file_csv}")     
                 return df
+    
+    def __check_path(self,file_path:str) -> None:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
     def __transform_bytes_to_csv_and_save(self,data,file_csv):
         """
         transform to utf-8 and save in csv

@@ -1,3 +1,74 @@
+## Data Enginner Dados Tercerizados:
+O processo tem como objetivo extrair, tratar e armazenar as base de dados encontradas em: link.
+
+
+Completude: A solução proposta atende a todos os requisitos do desafio?
+Simplicidade: A solução proposta é simples e direta? É fácil de entender e trabalhar?
+Organização: A solução proposta é organizada e bem documentada? É fácil de navegar e encontrar o que se procura?
+Criatividade: A solução proposta é criativa? Apresenta uma abordagem inovadora para o problema proposto?
+Boas práticas: A solução proposta segue boas práticas de Python, Git, Docker, etc.?
+
+
+
+
+Após ter o link dos artigos de cada categoria, é extraido as informações do artigo assim como seus links de pdf ou site da fonte do artigo.
+
+Depois é feito download via requisição (Request)
+
+Como mostra as etapas:
+
+1 Parte: Extração do link dos artigos do QXMD
+ <img src="imgs/part_1.png" alt="Logo do Projeto" width="100%">
+
+2 Parte: Extração Informações do artigos do QXMD
+ <img src="imgs/part_2.png" alt="Logo do Projeto" width="100%">
+
+3 Parte: Download do .pdf 
+ <img src="imgs/part_3.png" alt="Logo do Projeto" width="100%">
+
+ 
+ #### Antes de rodar o script no seu computador, certifique-se de ter o seguinte instalado em sua máquina:
+* Python 3.10.12
+* Docker 26.1.4
+* Docker-compose 1.29.2
+
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/bAlemar/desafio-data-eng
+
+2. **Navegue até o diretório do repositório clonado:**
+   ```bash
+   cd desafio-data-eng
+
+4. **Inicie o PostgreSQL**
+   ```bash
+   docker-compose up
+
+4. **Crie ambiente e Instale as depedências**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+
+4. **Inicie Prefect Server**
+   ```bash
+   prefect server start
+
+
+4. **Inicie os Flows**
+   ```bash
+   python3 flow.py
+
+
+
+http://127.0.0.1:4200/dashboard para acessar o dashboard do workflow do projeto. Toda orquestração é feita atraves do perfect.
+
+
+
+
+
+
 # Desafio de Data Engineer - EMD
 
 Repositório de instrução para o desafio técnico para vaga de Pessoa Engenheira de Dados no Escritório de Dados do Rio de Janeiro
