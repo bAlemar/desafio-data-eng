@@ -29,8 +29,6 @@ A pipeline captura dados do site do governo, que são atualizados quadrimestralm
 
 - **`DBT`**: Utilizado para criar views e tabelas derivadas a partir dos dados carregados no PostgreSQL.
 
-
-
 ### Explicando pouco do código:
 
 Caso o arquivo `urls_tercerizados.txt` não exista, o fluxo "first_run" é acionado para capturar APIs que geraram os arquivos `.csv`. (Há outras maneiras de fazer)
@@ -46,16 +44,6 @@ Juntamos todo o .CSV e enviamos para Postgres Via SQLAlchesmity.
 Com os dados no DB, o qual é inicializado via DockerCompose.
 
 É utilizado DBT para gerar tabelas as quais podem ser consumidas por um DashBoard, por exemplo.
-
-
-## Melhorias:
-
-Algumas melhorias que podem ser feitas:
-- Melhorar tratativas dos dados.
-- Coleta de Dados.
-- Refatoração de alguns códigos/arquitetura. (ta cm uma camada a mais eu acho)
-- Escalabilidade: Docker e Poetry
-- Implementar Schedule Quadrimestral/Lógica de ATT do banco.
 
 Nota-se que os dados devem ser atualizados quadrimestralmente. Para isso utilizaremos schedules do Prefect.
 
@@ -94,3 +82,14 @@ Nota-se que os dados devem ser atualizados quadrimestralmente. Para isso utiliza
 **Acessar Prefect Server:**
 
 http://127.0.0.1:4200/ 
+
+![flows](imgs/flows.png)
+![flows2](imgs/flows2.png)
+## Melhorias:
+
+Algumas melhorias que podem ser feitas:
+- Melhorar tratativas dos dados.
+- Coleta de Dados.
+- Refatoração de alguns códigos/arquitetura. (ta cm uma camada a mais eu acho)
+- Escalabilidade: Docker e Poetry
+- Implementar Schedule Quadrimestral/Lógica de ATT do banco.
