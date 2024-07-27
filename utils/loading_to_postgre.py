@@ -21,23 +21,22 @@ class LoadingToPosgre:
             'nr_jornada', 'nm_unidade_prestacao', 'vl_mensal_salario',
             'vl_mensal_custo', 'Num_Mes_Carga', 'Mes_Carga', 'Ano_Carga',
             'sg_orgao', 'nm_orgao', 'cd_orgao_siafi', 'cd_orgao_siape']
-        self.path_csv = 'teste'
+        self.path_csv = 'csv'
         self.repositorio = TercerizadosRepository()
-    def run(self):
-        df_final = self.loading_joing_all_dataframes()
-        print('len_df_final',len(df_final))
+    def loading_dataframe_to_postgres(self,df_final):
         self.repositorio.load_dataframe_to_postgres(df_final,'tercerizados')
 
-    def loading_joing_all_dataframes(self):
+    def extract_all_dataframes_and_join(self):
         lista_df = []
         for arquivo in os.listdir(self.path_csv):
             if arquivo.endswith('.csv'):
-                df = pd.read_csv(rf"{self.path_csv}/{arquivo}",sep=';',on_bad_lines='skip')
-                df.columns = self.columns #perda de dados (?)
+                try:
+                    df = pd.read_csv(rf"{self.path_csv}/{arquivo}",sep=';',on_bad_lines='skip')
+                    df.columns = self.columns #perda de dados (?)
+                except:
+                    df = pd.read_csv(rf"{self.path_csv}/{arquivo}",sep=',',on_bad_lines='skip')
+                    df.columns = self.columns                
                 lista_df.append(df)
         df_final = pd.concat(lista_df)
         return df_final
     
-if __name__ == "__main__":
-    script = LoadingToPosgre()
-    script.run()

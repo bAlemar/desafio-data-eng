@@ -6,7 +6,7 @@ from datetime import datetime
 import csv
 import re
 
-class Extract_Urls:
+class Extract_data:
     """
     Gera arquivo dataset_url.txt com as urls válidas além de gerar todas as tabelas.
     """
@@ -25,33 +25,34 @@ class Extract_Urls:
 
     # talvez tirar (?) é só para pegar url(api)
     def first_run(self):
-        urls_para_teste = self.__generate_urls(self.start_ano,self.end_ano,self.meses,self.urls_base)
-        urls, dados = self.__download_and_process(urls_para_teste)
-        self.__save_urls_to_txt(urls,self.file_txt)
-        self.__save_all_csv(dados)
+        urls_para_teste = self.generate_urls(self.start_ano,self.end_ano,self.meses,self.urls_base)
+        urls, dados = self.download_and_process(urls_para_teste)
+        self.save_urls_to_txt(urls,self.file_txt)
+        self.save_all_csv(dados)
 
         return urls,dados
     
     def run(self):
-        urls = self.__extract_url(self.file_txt)
-        urls,all_data = self.__download_and_process(urls)
-        self.__save_all_csv(all_data)
+        urls = self.extract_url(self.file_txt)
+        urls,all_data = self.download_and_process(urls)
+        self.save_all_csv(all_data)
         return urls,all_data
     
-    def __save_all_csv(self,all_data):
+    def save_all_csv(self,all_data):
         """
         Salva tanto csv quanto xlsx
         """
         for pos in range(len(all_data['url'])):
             type_file = all_data['tipo'][pos]
-            file_csv = all_data['url'][pos].split('.')[-2].split('/')[-1] + '.' + type_file
+            file_csv = all_data['url'][pos].split('.')[-2].split('/')[-1] + '.' + 'csv'
+            path_csv = 'csv'
             data = all_data['data_content'][pos]
             if type_file == 'csv':
-                self.__transform_bytes_to_csv(data,file_csv)
+                self.__transform_bytes_to_csv_and_save(data,rf"{path_csv}/{file_csv}")
             elif type_file == 'xlsx':
-                 self.__transform_bytes_to_xlsx(data,file_csv)     
-
-    def __transform_bytes_to_csv(self,data,file_csv):
+                df = self.transform_bytes_to_xlsx_and_save(data,rf"{path_csv}/{file_csv}")     
+                return df
+    def __transform_bytes_to_csv_and_save(self,data,file_csv):
         """
         transform to utf-8 and save in csv
         """
@@ -66,26 +67,26 @@ class Extract_Urls:
                 writer.writerow(re.split('\s+',line))
 
 
-    def __transform_bytes_to_xlsx(self,data,file_xlsx):
+    def transform_bytes_to_xlsx_and_save(self,data,file_xlsx):
         df = pd.read_excel(data)
         df.to_csv(file_xlsx,index=False)
+        return df
 
-
-    def __extract_url(self,file_path):
+    def extract_url(self,file_path):
         with open(file_path, 'r') as file:
             lines = file.readlines()
         lines = [line.strip() for line in lines]
         return lines
 
 
-    def __save_urls_to_txt(self,urls, filename):
+    def save_urls_to_txt(self,urls, filename):
         with open(filename, 'w') as file:
             for url in urls:
                 file.write(url + '\n')
 
 
     # Função para gerar URLs
-    def __generate_urls(self,start_ano, end_ano, meses, urls_base):
+    def generate_urls(self,start_ano, end_ano, meses, urls_base):
         urls = []
         for ano in range(start_ano, end_ano + 1):
             for mes in meses:
@@ -95,7 +96,7 @@ class Extract_Urls:
         return urls
     
     # Função para baixar e processar os arquivos
-    def __download_and_process(self,urls):
+    def download_and_process(self,urls):
         dados = {
             'url':[],
             'data_content':[],
@@ -118,7 +119,3 @@ class Extract_Urls:
                 print(f"Erro ao baixar ou processar o arquivo {url}: {e}")
         return lista_urls,dados
     
-
-if __name__ == "__main__":
-    script = Extract_Urls()
-    script.run()
