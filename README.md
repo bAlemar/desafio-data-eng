@@ -1,16 +1,64 @@
 ## Data Enginner Dados Tercerizados:
-O processo tem como objetivo extrair, tratar e armazenar as base de dados encontradas em: link.
+
+Este projeto tem como objetivo extrair, tratar e armazenar dados de terceirizados disponíveis em [dados abertos do governo](https://www.gov.br/cgu/pt-br/acesso-a-informacao/dados-abertos/arquivos/terceirizados).
+
+![Pipeline](imgs/excalidraw.png)
+
+A pipeline captura dados do site do governo, que são atualizados quadrimestralmente. Foi utilizado:
+- Prefect:  Orquestrador para gerenciar todo o processo da pipeline. Permite monitorar o desempenho dos pipelines e gerenciar tarefas de forma eficiente.
+- Docker Comopse: Escalabilidade e segurança do código. (Falta DockerFile do Prefect)
+- Python: Pandas e SQLAlchemy.
+- DBT: Utilizado para criar views e tabelas derivadas a partir dos dados carregados no PostgreSQL, facilitando a integração com dashboards e outras ferramentas de visualização.
 
 
-Completude: A solução proposta atende a todos os requisitos do desafio?
-Simplicidade: A solução proposta é simples e direta? É fácil de entender e trabalhar?
-Organização: A solução proposta é organizada e bem documentada? É fácil de navegar e encontrar o que se procura?
-Criatividade: A solução proposta é criativa? Apresenta uma abordagem inovadora para o problema proposto?
-Boas práticas: A solução proposta segue boas práticas de Python, Git, Docker, etc.?
+## Estrutura do Projeto
+
+### Extração e Processamento
+
+- **`generate_urls`**: Gera URLs para os arquivos de dados baseados no ano e mês fornecidos.
+- **`download_and_process`**: Baixa e processa os arquivos CSV e XLSX a partir das URLs geradas.
+- **`save_urls_to_txt`**: Salva as URLs geradas em um arquivo `.txt`.
+- **`save_all_csv`**: Salva os dados processados em arquivos CSV.
+
+### Armazenamento
+
+- **`load_dataframes_from_csv`**: Carrega os dados dos arquivos CSV para um DataFrame Final e realiza a junção dos dados.
+- **`load_dataframe_to_postgres`**: Carrega o DataFrame para uma tabela no PostgreSQL.
+
+### Transformação
+
+- **`DBT`**: Utilizado para criar views e tabelas derivadas a partir dos dados carregados no PostgreSQL.
 
 
 
- 
+### Explicando pouco do código:
+
+Caso o arquivo `urls_tercerizados.txt` não exista, o fluxo "first_run" é acionado para capturar APIs que geraram os arquivos `.csv`. (Há outras maneiras de fazer)
+
+OBS: Já disponibilizamos o arquivo `urls_tercerizados.txt` necessário para a execução.
+
+O flow Extract and Saving as CSV vai extrair os dados de todas as base de dados 
+
+Agora que temos url fazemos requisição via requests tratamos e baixamos em csv na pasta /csv.
+
+Juntamos todo o .CSV e enviamos para Postgres Via SQLAlchesmity.
+
+Com os dados no DB, o qual é inicializado via DockerCompose.
+
+É utilizado DBT para gerar tabelas as quais podem ser consumidas por um DashBoard, por exemplo.
+
+
+## Melhorias:
+
+Algumas melhorias que podem ser feitas:
+- Melhorar tratativas dos dados.
+- Coleta de Dados.
+- Refatoração de alguns códigos/arquitetura. (ta cm uma camada a mais eu acho)
+- Escalabilidade: Docker e Poetry
+- Implementar Schedule Quadrimestral/Lógica de ATT do banco.
+
+Nota-se que os dados devem ser atualizados quadrimestralmente. Para isso utilizaremos schedules do Prefect.
+
  #### Antes de rodar o script no seu computador, certifique-se de ter o seguinte instalado em sua máquina:
 * Python 3.10.12
 * Docker 26.1.4
@@ -39,57 +87,10 @@ Boas práticas: A solução proposta segue boas práticas de Python, Git, Docker
    ```bash
    prefect server start
 
-
 4. **Inicie os Flows**
    ```bash
    python3 flow.py
 
+**Acessar Prefect Server:**
 
-
-http://127.0.0.1:4200/dashboard para acessar o dashboard do workflow do projeto. Toda orquestração é feita atraves do perfect.
-
-
-
-
-
-
-# Desafio de Data Engineer - EMD
-
-Repositório de instrução para o desafio técnico para vaga de Pessoa Engenheira de Dados no Escritório de Dados do Rio de Janeiro
-
-## Descrição do desafio
-
-Neste desafio você deverá capturar, estruturar, armazenar e transformar dados de Terceirizados de Órgãos Federais, disponíveis no site [Dados Abertos - Terceirizados de Órgãos Federais](https://www.gov.br/cgu/pt-br/acesso-a-informacao/dados-abertos/arquivos/terceirizados).
-
-Para o desafio, será necessário construir uma pipeline que realiza a extração, processamento e transformação dos dados. Salve os dados de cada mes em um arquivo CSV (estruture os dados da maneira que achar mais conveniente, você tem liberdade para criar novas colunas ou particionar os dados), então carregue os dados para uma tabela no Postgres. Por fim, crie uma tabela derivada usando o DBT. A tabela derivada deverá seguir a padronização especificada no [manual de estilo do Escritorio de Dados](https://docs.dados.rio/guia-desenvolvedores/manual-estilo/#nome-e-ordem-das-colunas). A solução devera contemplar o surgimento de novos dados a cada 4 meses.
-
-
-## O que iremos avaliar
-
-- **Completude**: A solução proposta atende a todos os requisitos do desafio?
-- **Simplicidade**: A solução proposta é simples e direta? É fácil de entender e trabalhar?
-- **Organização**: A solução proposta é organizada e bem documentada? É fácil de navegar e encontrar o que se procura?
-- **Criatividade**: A solução proposta é criativa? Apresenta uma abordagem inovadora para o problema proposto?
-- **Boas práticas**: A solução proposta segue boas práticas de Python, Git, Docker, etc.?
-
-## Atenção
-
-- A solução desse desafio deve ser publicada em um fork deste repositório no GitHub.
-- O link do repositório deve ser enviado até às 23:59, horário de Brasília, do dia 26 de julho de 2024, para o e-mail utilizado para contato com o assunto "Desafio Data Engineer - EMD".
-- Você deve ser capaz de apresentar sua solução, explicando como a idealizou, caso seja aprovado(a) para a próxima etapa.
-
-## Links de referência / utilidades
-
-- Documentação [Prefect](https://docs-v1.prefect.io/)
-- Documentação [DBT](https://docs.getdbt.com/docs/introduction)
-- Instalar e configurar o
-   [Prefect Server](https://docs.prefect.io/orchestration/getting-started/install.html)
-   locamente com um [Docker Agent](https://docs.prefect.io/orchestration/agents/docker.html)
-- [Dados Abertos - Terceirizados de Órgãos Federais](https://www.gov.br/cgu/pt-br/acesso-a-informacao/dados-abertos/arquivos/terceirizados)
-- Repositório pipelines do [Escritorio de Dados](https://github.com/prefeitura-rio/pipelines)
-- Repositório de modelos DBT do [Escritorio de Dados](https://github.com/prefeitura-rio/queries-datario)
-- [Manual de estilo do Escritório de Dados](https://docs.dados.rio/guia-desenvolvedores/manual-estilo/#nome-e-ordem-das-colunas)
-  
-## Dúvidas?
-
-Fale conosco pelo e-mail que foi utilizado para o envio desse desafio.
+http://127.0.0.1:4200/ 
